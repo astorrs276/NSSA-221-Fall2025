@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3.11
+#!/usr/bin/python3.9
 import os
 import subprocess
 
@@ -17,7 +17,7 @@ def default_gateway():
     return gateway
 
 def local_connection():
-    command = "ping -c 2 127.0.0.1"
+    command = ["ping", "-c", "2", "127.0.0.1"]
     try:
         result = subprocess.run(command, capture_output=True, text=True, check=True)
         return result.stdout
@@ -25,7 +25,7 @@ def local_connection():
         return "FAILED"
 
 def remote_connection():
-    command = "ping -c 2 8.8.8.8"
+    command = ["ping", "-c", "2", "8.8.8.8"]
     try:
         result = subprocess.run(command, capture_output=True, text=True, check=True)
         return result.stdout
@@ -33,7 +33,7 @@ def remote_connection():
         return "FAILED"
 
 def dns_connection():
-    command = "ping -c 2 www.google.com"
+    command = ["ping", "-c", "2" "www.google.com"]
     try:
         result = subprocess.run(command, capture_output=True, text=True, check=True)
         return result.stdout
@@ -52,10 +52,10 @@ def main():
             print(local_connection())
         elif choice == "3":
             print("Testing remote connection:")
-            print(local_connection())
+            print(remote_connection())
         elif choice == "4":
             print("Testing DNS:")
-            print(local_connection())
+            print(dns_connection())
         elif choice == "5":
             print("Goodbye")
             break
