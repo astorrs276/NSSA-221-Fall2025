@@ -33,7 +33,7 @@ def remote_connection():
         return "FAILED"
 
 def dns_connection():
-    command = ["ping", "-c", "2" "www.google.com"]
+    command = ["ping", "-c", "2", "www.google.com"]
     try:
         result = subprocess.run(command, capture_output=True, text=True, check=True)
         return result.stdout
