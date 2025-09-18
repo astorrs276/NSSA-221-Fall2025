@@ -51,6 +51,7 @@ def dns_connection():
 
 # Main function to get the user's action and run everything accordingly
 def main():
+    os.system("clear")
     while True:
         print_options()
         choice = input(">> ")
@@ -78,6 +79,7 @@ def main():
             print("Goodbye")
             break
         else:
+            os.system("clear")
             print("Invalid input")
 
 if __name__ == '__main__':
