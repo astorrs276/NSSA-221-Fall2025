@@ -1,19 +1,4 @@
 #!/usr/bin/python3.9
-'''
-import os
-import subprocess
-
-# Alexander Storrs
-# 9/30/2025
-
-def main():
-    os.system("clear")
-
-
-if __name__ == "__main__":
-    main()
-'''
-
 import os
 import socket
 import subprocess
@@ -45,15 +30,10 @@ def get_default_gateway():
     return match.group(1) if match else "N/A"
 
 def get_netmask(ip):
-    # Find netmask for the given IP
-    output = run_cmd("ip -o -f inet addr show")
-    for line in output.splitlines():
-        if ip in line:
-            match = re.search(r"/(\d+)", line)
-            if match:
-                prefix = int(match.group(1))
-                mask = (0xffffffff >> (32 - prefix)) << (32 - prefix)
-                return ".".join([str((mask >> (i * 8)) & 0xff) for i in [3, 2, 1, 0]])
+    output = run_cmd(f"ip -o -f inet addr show | grep {ip}")
+    if output:
+        cidr = output.split()[3]
+        return cidr.split('/')[1]
     return "N/A"
 
 def get_system_disk():
@@ -61,49 +41,65 @@ def get_system_disk():
     return usage.total, usage.free
 
 def main():
-    print("===== System Report =====")
-    print(f"Current date: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    os.system("clear")
 
-    hostname = socket.gethostname()
-    fqdn = socket.getfqdn()
-    ip = run_cmd("hostname -I").split()[0] if run_cmd("hostname -I") else "N/A"
+    # Log file in user's home directory
+    home_dir = os.path.expanduser("~")
+    log_path = os.path.join(home_dir, "system_report.log")
 
-    print(f"Host name: {hostname}")
-    print(f"Domain suffix: {fqdn.replace(hostname+'.','') if fqdn != hostname else 'N/A'}")
-    print(f"IPv4 address: {ip}")
-    print(f"Default gateway: {get_default_gateway()}")
-    print(f"Network mask: {get_netmask(ip)}")
-    
-    dns_servers = get_dns_servers()
-    print(f"Primary DNS server: {dns_servers[0]}")
-    print(f"Secondary DNS server: {dns_servers[1] if len(dns_servers) > 1 else 'N/A'}")
+    # Open file for writing
+    with open(log_path, "a") as log:
+        def log_print(text):
+            print(text)
+            log.write(text + "\n")
 
-    # OS info
-    os_name = run_cmd("cat /etc/os-release | grep ^NAME= | cut -d= -f2").strip('"')
-    os_version = run_cmd("cat /etc/os-release | grep ^VERSION= | cut -d= -f2").strip('"')
-    kernel_version = platform.release()
+        log_print("===== System Report =====")
+        # Get the current date and time
+        log_print(f"Current date: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
-    print(f"Operating system name: {os_name}")
-    print(f"Operating system version: {os_version}")
-    print(f"Kernel version: {kernel_version}")
+        # Get and print hostname
+        hostname = socket.gethostname()
+        log_print(f"Host name: {hostname}")
 
-    # Disk info
-    total_disk, free_disk = get_system_disk()
-    print(f"System disk size: {total_disk // (1024**3)} GB")
-    print(f"Available system disk space: {free_disk // (1024**3)} GB")
+        # Get and print domain suffix if it exists
+        fqdn = socket.getfqdn()
+        log_print(f"Domain suffix: {fqdn.replace(hostname+'.','') if fqdn != hostname else 'N/A'}")
 
-    # CPU info
-    cpu_model = run_cmd("lscpu | grep 'Model name' | awk -F: '{print $2}'").strip()
-    cpu_count = psutil.cpu_count(logical=True)
-    cpu_cores = psutil.cpu_count(logical=False)
-    print(f"CPU model: {cpu_model}")
-    print(f"Number of CPUs: {cpu_count}")
-    print(f"Number of CPU cores: {cpu_cores}")
+        # Get and print IP information
+        ip = run_cmd("hostname -I").split()[0] if run_cmd("hostname -I") else "N/A"
+        log_print(f"IPv4 address: {ip}")
+        log_print(f"Default gateway: {get_default_gateway()}")
+        log_print(f"Network mask: {get_netmask(ip)}")
 
-    # Memory
-    mem = psutil.virtual_memory()
-    print(f"Total RAM: {mem.total // (1024**2)} MB")
-    print(f"Available RAM: {mem.available // (1024**2)} MB")
+        # Get and print DNS server(s)
+        dns_servers = get_dns_servers()
+        log_print(f"Primary DNS server: {dns_servers[0]}")
+        log_print(f"Secondary DNS server: {dns_servers[1] if len(dns_servers) > 1 else 'N/A'}")
+
+        # Get and print OS name
+        log_print(f"Operating system name: {run_cmd("cat /etc/os-release | grep ^NAME= | cut -d= -f2").strip('"')}")
+
+        # Get and print OS version
+        log_print(f"Operating system version: {run_cmd("cat /etc/os-release | grep ^VERSION= | cut -d= -f2").strip('"')}")
+
+        # Get and print kernel version
+        log_print(f"Kernel version: {platform.release()}")
+
+        # Get disk size and information
+        total_disk, free_disk = get_system_disk()
+        log_print(f"System disk size: {total_disk // (1024**3)} GB")
+        log_print(f"Available system disk space: {free_disk // (1024**3)} GB")
+
+        # Get and print all cpu information
+        log_print(f"CPU model: {run_cmd("lscpu | grep 'Model name' | awk -F: '{print $2}'").strip()}")
+        log_print(f"Number of CPUs: {psutil.cpu_count(logical=True)}")
+        log_print(f"Number of CPU cores: {psutil.cpu_count(logical=False)}")
+
+        mem = psutil.virtual_memory()
+        log_print(f"Total RAM: {mem.total // (1024**2)} MB")
+        log_print(f"Available RAM: {mem.available // (1024**2)} MB")
+
+    print(f"\nReport saved to: {log_path}")
 
 if __name__ == "__main__":
     main()
