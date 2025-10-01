@@ -93,7 +93,8 @@ def main():
         log_print(f"Available system disk space: {free_disk // (1024**3)} GB")
 
         # Get and print all cpu information
-        log_print(f"CPU model: {run_cmd("lscpu | grep 'Model name' | awk -F: '{print $2}'").strip()}")
+        cpu = run_cmd("lscpu | grep 'Model name' | awk -F: '{print $2}'").strip()
+        log_print(f"CPU model: {cpu}")
         log_print(f"Number of CPUs: {psutil.cpu_count(logical=True)}")
         log_print(f"Number of CPU cores: {psutil.cpu_count(logical=False)}")
 
