@@ -48,7 +48,7 @@ def main():
     log_path = os.path.join(home_dir, "system_report.log")
 
     # Open file for writing
-    with open(log_path, "a") as log:
+    with open(log_path, "w") as log:
         def log_print(text):
             print(text)
             log.write(text + "\n")
