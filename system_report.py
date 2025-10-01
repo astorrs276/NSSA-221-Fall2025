@@ -66,7 +66,7 @@ def main():
 
         log_print("===== System Report =====")
 
-        # Get the current date and time
+        # Get and print the current date and time
         log_print(f"Current date: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
         # Get and print hostname
@@ -99,7 +99,7 @@ def main():
         # Get and print kernel version
         log_print(f"Kernel version: {platform.release()}")
 
-        # Get disk size and information
+        # Get and print disk size and information
         total_disk, free_disk = get_system_disk()
         log_print(f"System disk size: {total_disk // (1024**3)} GB")
         log_print(f"Available system disk space: {free_disk // (1024**3)} GB")
