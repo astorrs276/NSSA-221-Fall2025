@@ -7,12 +7,17 @@ import psutil
 import datetime
 import re
 
+# Alexander Storrs
+# 9/30/2025
+
+# Function to run any commands I need to
 def run_cmd(cmd):
     try:
         return subprocess.check_output(cmd, shell=True, text=True).strip()
     except subprocess.CalledProcessError:
         return "N/A"
 
+# Function to get the DNS server
 def get_dns_servers():
     dns = []
     try:
@@ -24,11 +29,13 @@ def get_dns_servers():
         pass
     return dns if dns else ["N/A"]
 
+# Function to get the default gateway
 def get_default_gateway():
     route = run_cmd("ip route show default")
     match = re.search(r"default via ([0-9.]+)", route)
     return match.group(1) if match else "N/A"
 
+# Function to get the netmask
 def get_netmask(ip):
     output = run_cmd(f"ip -o -f inet addr show | grep {ip}")
     if output:
@@ -36,11 +43,14 @@ def get_netmask(ip):
         return cidr.split('/')[1]
     return "N/A"
 
+# Function to get the system disk
 def get_system_disk():
     usage = psutil.disk_usage('/')
     return usage.total, usage.free
 
+# Main function for main functionality
 def main():
+    # Clear the terminal
     os.system("clear")
 
     # Log file in user's home directory
@@ -49,11 +59,13 @@ def main():
 
     # Open file for writing
     with open(log_path, "w") as log:
+        # Function to easily both print and log all the information
         def log_print(text):
             print(text)
             log.write(text + "\n")
 
         log_print("===== System Report =====")
+
         # Get the current date and time
         log_print(f"Current date: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
@@ -98,6 +110,7 @@ def main():
         log_print(f"Number of CPUs: {psutil.cpu_count(logical=True)}")
         log_print(f"Number of CPU cores: {psutil.cpu_count(logical=False)}")
 
+        # Get and print RAM information
         mem = psutil.virtual_memory()
         log_print(f"Total RAM: {mem.total // (1024**2)} MB")
         log_print(f"Available RAM: {mem.available // (1024**2)} MB")
