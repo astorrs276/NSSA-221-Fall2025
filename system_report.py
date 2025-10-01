@@ -77,7 +77,7 @@ def main():
         log_print(f"Secondary DNS server: {dns_servers[1] if len(dns_servers) > 1 else 'N/A'}")
 
         # Get and print OS name
-        os_name = run_cmd("/etc/os-release | grep ^NAME= | cut -d= -f2").strip('"')
+        os_name = run_cmd("cat /etc/os-release | grep ^NAME= | cut -d= -f2").strip('"')
         log_print(f"Operating system name: {os_name}")
 
         # Get and print OS version
