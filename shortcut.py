@@ -98,12 +98,12 @@ def generate_report():
             print(f"Error: {e}")
 
     # Count all symbolic links in home directory
-    all_links = [p for p in home.rglob('*') if p.is_symlink()]
+    all_links = [p for p in desktop.rglob('*') if p.is_symlink()]
     print(f"{len(all_links)} symlinks found.")
 
 def main():
+    os.system("clear")
     while True:
-        os.system("clear")
         print("1 - Create a symbolic link")
         print("2 - Delete a symbolic link")
         print("3 - Generate a symbolic link report")
@@ -122,6 +122,7 @@ def main():
             generate_report()
         else:
             print("Invalid input.")
+        print()
 
 if __name__ == "__main__":
     main()
