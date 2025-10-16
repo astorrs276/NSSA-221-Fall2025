@@ -24,7 +24,6 @@ def create_symlink():
         print("Error: No files found.")
         return
 
-    # Bonus task: multiple matches
     if len(matches) > 1:
         print(f"Which file?")
         for i, path in enumerate(matches, 1):
@@ -97,7 +96,6 @@ def generate_report():
         except Exception as e:
             print(f"Error: {e}")
 
-    # Count all symbolic links in home directory
     all_links = [p for p in desktop.rglob('*') if p.is_symlink()]
     print(f"{len(all_links)} symlinks found.")
 
